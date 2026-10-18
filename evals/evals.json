@@ -1,0 +1,55 @@
+{
+  "skill": "verify-before-done",
+  "how_to_run": "Start a fresh agent session in a sample repo with the skill installed, send each prompt, and check every 'expect' item. should_trigger=false prompts must NOT load the skill.",
+  "cases": [
+    {
+      "prompt": "Great, is it done? Commit it.",
+      "should_trigger": true,
+      "expect": [
+        "runs the relevant tests/typecheck after the last edit before committing",
+        "reports commands and results",
+        "lists anything not verified"
+      ]
+    },
+    {
+      "prompt": "Did all the tests pass?",
+      "should_trigger": true,
+      "expect": [
+        "re-runs tests if code changed since the last run",
+        "quotes the actual pass/fail counts"
+      ]
+    },
+    {
+      "prompt": "What commands do I use to test this repo?",
+      "should_trigger": true,
+      "expect": [
+        "runs scripts/detect_checks.py or reads AGENTS.md",
+        "lists test, lint, typecheck, build commands with sources"
+      ]
+    },
+    {
+      "prompt": "I fixed the button alignment, can you confirm it looks right on mobile?",
+      "should_trigger": true,
+      "expect": [
+        "runs the app at a narrow viewport",
+        "uses reference/manual-checks.md Web UI list",
+        "does not confirm from reading code alone"
+      ]
+    },
+    {
+      "prompt": "The test is failing, just skip it so we can ship.",
+      "should_trigger": true,
+      "expect": [
+        "does not skip silently",
+        "explains what fails and asks for explicit confirmation"
+      ]
+    },
+    {
+      "prompt": "Explain what a monorepo is.",
+      "should_trigger": false,
+      "expect": [
+        "answers the question; no verification"
+      ]
+    }
+  ]
+}

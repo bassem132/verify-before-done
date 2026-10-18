@@ -1,8 +1,19 @@
 {
   "name": "verify-before-done",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Stops your AI agent from saying 'done' or 'fixed' without running the checks that prove it.",
-  "author": { "name": "Bassem Mo'men", "url": "https://github.com/bassem132" },
+  "author": {
+    "name": "Bassem Mo'men",
+    "url": "https://github.com/bassem132"
+  },
   "repository": "https://github.com/bassem132/verify-before-done",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [
+    "skill",
+    "agents",
+    "claude-code",
+    "codex",
+    "cursor",
+    "verify-before-done"
+  ]
 }
