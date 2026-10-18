@@ -1,0 +1,7 @@
+{
+  "name": "verify-before-done",
+  "owner": { "name": "Bassem Mo'men" },
+  "plugins": [
+    { "name": "verify-before-done", "source": "./", "description": "Stops your AI agent from saying 'done' or 'fixed' without running the checks that prove it." }
+  ]
+}
