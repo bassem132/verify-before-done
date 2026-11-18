@@ -1,7 +1,7 @@
 ---
 name: verify-before-done
-description: Require fresh evidence before claiming work is done, fixed, working or passing. Use before saying a task is complete, before committing, pushing or opening a PR, when the user asks "is it done?", "does it work?", "did the tests pass?", and whenever you are about to write "should work", "fixed", "done" or "all tests pass". Also use when picking which test, lint or build commands a repo uses.
-author: Bassem Mo'men
+description: Require fresh evidence before claiming work is done, fixed, working or passing. Use before saying a task is complete, before committing, pushing or opening a PR, when the user asks "is it done?", "does it work?", "did the tests pass?", and whenever you are about to write "should work", "fixed", "done" or "all tests pass". Also use when picking which test, lint or build commands a repo uses. If another completion-check skill (such as verification-before-completion) is already active, follow this one for the commands, report and commit gate and do not repeat the same checks twice.
+author: Bassem Moumen
 license: MIT
 ---
 
@@ -64,6 +64,11 @@ Not verified:
 ## Enforcement hook (Claude Code)
 
 When this repo is installed as a Claude Code plugin, `hooks/hooks.json` turns the rule into a gate. If code files were edited after the last test, lint, typecheck or build command, `git commit` and `gh pr create` are blocked until the checks run. Docs-only edits never block. If the user explicitly approves committing without checks, prefix the command with `VERIFY_SKIP=1`.
+
+What the gate does and doesn't catch:
+- A run only counts if the test, lint, typecheck or build command starts a command segment and (when Claude Code reports it) did not fail. `npm install jest`, `grep pytest .`, `--version` and `--collect-only` don't clear it.
+- Shell edits (`sed -i`, `perl -pi`, `>` / `>>`, `tee`, `git apply`) mark the session unverified, same as the Edit tool.
+- It is a heuristic on command text. It can't tell whether the check you ran covers the code you changed, and a failure hidden by a pipe (`pnpm test | tail`) looks like a pass. Reading the output is still your job.
 
 ## Files in this skill
 

@@ -69,6 +69,40 @@ class GateTests(unittest.TestCase):
         for cmd in ("git -c user.name=x commit -m y", "git --no-pager commit -m y", "cd /repo && git commit -m y"):
             self.assertEqual(self.bash("gate", cmd).returncode, 2, cmd)
 
+    def test_non_runs_do_not_clear_the_gate(self):
+        for cmd in ("npm install jest", "pip install pytest", "grep -rn pytest .", "echo run vitest",
+                    "eslint --version", "pytest --collect-only", "cat package.json | grep test"):
+            self.edit("/repo/src/app.ts")
+            self.bash("ran", cmd)
+            self.assertEqual(self.bash("gate", "git commit -m x").returncode, 2, cmd)
+
+    def test_real_checks_still_clear_the_gate(self):
+        for cmd in ("pnpm test", "npx tsc --noEmit", "cd /repo && pytest -q", "CI=1 npm run build",
+                    "go vet ./... && go test ./...", "time cargo test"):
+            self.edit("/repo/src/app.ts")
+            self.bash("ran", cmd)
+            self.assertEqual(self.bash("gate", "git commit -m x").returncode, 0, cmd)
+
+    def test_failed_check_does_not_clear_the_gate(self):
+        self.edit("/repo/src/app.ts")
+        event = {"session_id": self.session, "tool_name": "Bash", "tool_input": {"command": "pnpm test"},
+                 "tool_response": {"exitCode": 1}}
+        subprocess.run([sys.executable, HOOK, "ran"], input=json.dumps(event), capture_output=True, text=True)
+        self.assertEqual(self.bash("gate", "git commit -m x").returncode, 2)
+
+    def test_shell_edits_mark_dirty(self):
+        for cmd in ("sed -i '' 's/a/b/' src/app.ts", "echo 'x' > src/app.js", "cat <<EOF >> main.py\nx\nEOF",
+                    "git apply fix.patch", "perl -pi -e 's/a/b/' lib/util.rb"):
+            self.session = "test-" + uuid.uuid4().hex
+            self.bash("ran", cmd)
+            self.assertEqual(self.bash("gate", "git commit -m x").returncode, 2, cmd)
+
+    def test_shell_doc_or_devnull_redirects_ignored(self):
+        for cmd in ("echo hi > notes.md", "npm run lint 2>/dev/null", "ls > /dev/null", "echo x >> CHANGELOG.md"):
+            self.session = "test-" + uuid.uuid4().hex
+            self.bash("ran", cmd)
+            self.assertEqual(self.bash("gate", "git commit -m x").returncode, 0, cmd)
+
     def test_hooks_json_valid(self):
         with open(HOOKS_JSON) as fh:
             config = json.load(fh)

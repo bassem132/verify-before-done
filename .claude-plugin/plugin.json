@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "description": "Stops your AI agent from saying 'done' or 'fixed' without running the checks that prove it.",
   "author": {
-    "name": "Bassem Mo'men",
+    "name": "Bassem Moumen",
     "url": "https://github.com/bassem132"
   },
   "repository": "https://github.com/bassem132/verify-before-done",

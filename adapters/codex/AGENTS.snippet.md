@@ -1,4 +1,4 @@
-<!-- verify-before-done by Bassem Mo'men (MIT). Paste into your AGENTS.md if you don't install the full skill. -->
+<!-- verify-before-done by Bassem Moumen (MIT). Paste into your AGENTS.md if you don't install the full skill. -->
 
 ## Verify before done
 
